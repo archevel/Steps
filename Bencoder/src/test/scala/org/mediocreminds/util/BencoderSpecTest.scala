@@ -8,6 +8,8 @@ import matcher.Matcher
 import runner.{JUnit4}
 import BenConversions._
 import scala.collection.immutable.TreeMap
+import scala.collection.immutable.SortedMap
+import java.io.{File, FileInputStream}
 
 
 /**
@@ -106,6 +108,64 @@ object BencoderSpec extends Specification {
       Bencoder.decode(encoding1) must beNone
       val encoding2 = List[Byte]('d', '4', ':', 'e', 'm', 'i', 'l', 'i', '1', 'e', 'e', 'e').toArray
       Bencoder.decode(encoding2) must beNone
+    }
+    "decode an Array from Bencoder.scala.torrent file " +
+            "into a SortedMap[BenString, Benable] " +
+            "and then encode it to an equivalent Array" in {
+      var file = new File("src/test/resources/Bencoder.scala.torrent")
+      decodeAndEncodeTestFile(file)
+    }
+    "decode an Array from TrackerProject.scala.torrent file " +
+            "into a SortedMap[BenString, Benable] " +
+            "and then encode it to an equivalent Array" in {
+      var file = new File("src/test/resources/TrackerProject.torrent")
+      decodeAndEncodeTestFile(file)
+    }
+    "decode an Array from Steps.scala.torrent file " +
+            "into a SortedMap[BenString, Benable] " +
+            "and then encode it to an equivalent Array" in {
+      var file = new File("src/test/resources/Steps.torrent")
+      decodeAndEncodeTestFile(file)
+    }
+  }
+
+  def decodeAndEncodeTestFile(file: File) = {
+
+    val bytes = readBytes(file)
+
+    val decMap = Bencoder.decode(bytes) match {
+      case Some(BenMap(x)) => x
+      case _ => fail
+    }
+
+    comp(Bencoder.encode(decMap), bytes) mustEqual true
+  }
+
+  def readBytes(file: File): Array[Byte] = {
+    val is = new FileInputStream(file)
+    try {
+      val len = file.length.toInt
+      val bytes = new Array[Byte](len)
+      var offset = 0
+      var numRead = is.read(bytes, offset, len - offset)
+      while (offset < len && numRead >= 0) {
+        offset += numRead
+        numRead = is.read(bytes, offset, len - offset)
+      }
+      return bytes
+    } finally {
+      is.close
+    }
+  }
+
+  def comp(array: Array[Byte], array2: Array[Byte]): Boolean = {
+    if (array.length == array2.length) {
+      val zipped = array zip array2
+      (zipped forall ((tuple) => {
+        tuple._1 == tuple._2
+      }))
+    } else {
+      false
     }
   }
 }

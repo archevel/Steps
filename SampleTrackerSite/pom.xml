@@ -1,14 +1,16 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project
+        xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <artifactId>TrackerProject</artifactId>
         <groupId>org.mediocreminds</groupId>
         <version>0.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>Steps</artifactId>
-    <packaging>jar</packaging>
-    <name>Steps</name>
+    <artifactId>SampleTrackerSite</artifactId>
+    <packaging>war</packaging>
+    <name>SampleTrackerSite</name>
     <inceptionYear>2007</inceptionYear>
     <properties>
         <scala.version>2.7.7</scala.version>
@@ -38,11 +40,6 @@
         </dependency>
         <dependency>
             <groupId>net.liftweb</groupId>
-            <artifactId>lift-util</artifactId>
-            <version>1.1-M7</version>
-        </dependency>
-        <dependency>
-            <groupId>net.liftweb</groupId>
             <artifactId>lift-webkit</artifactId>
             <version>1.1-M7</version>
         </dependency>
@@ -51,6 +48,13 @@
             <artifactId>lift-mapper</artifactId>
             <version>1.1-M7</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.2.121</version>
+        </dependency>
+
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
@@ -61,6 +65,12 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-tools.testing</groupId>
+            <artifactId>specs</artifactId>
+            <version>1.6.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -78,7 +88,7 @@
         </dependency>
         <dependency>
             <groupId>org.mediocreminds</groupId>
-            <artifactId>Bencoder</artifactId>
+            <artifactId>Steps</artifactId>
             <version>0.1</version>
         </dependency>
     </dependencies>

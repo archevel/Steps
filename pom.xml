@@ -10,6 +10,7 @@
     <modules>
         <module>Steps</module>
         <module>Bencoder</module>
+        <module>SampleTrackerSite</module>
     </modules>
     <packaging>pom</packaging>
 

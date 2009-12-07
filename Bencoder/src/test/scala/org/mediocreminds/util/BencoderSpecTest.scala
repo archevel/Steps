@@ -1,7 +1,26 @@
-package org.mediocreminds.util
+/**
+ *   Copyright 2009 Emil Hellman
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
 
-//import org.specs._
-// import org.specs.runner.{ConsoleRunner, JUnit4}
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ **/
+/**
+ * User: archevel
+ * Date: 2009-nov-10
+ * Time: 15:24:47
+ */
+
+package org.mediocreminds.util
 
 import org.specs._
 import matcher.Matcher
@@ -10,15 +29,6 @@ import BenConversions._
 import scala.collection.immutable.TreeMap
 import scala.collection.immutable.SortedMap
 import java.io.{File, FileInputStream}
-
-
-/**
- * Created by IntelliJ IDEA.
- * User: archevel
- * Date: 2009-nov-10
- * Time: 15:24:47
- * To change this template use File | Settings | File Templates.
- */
 
 class BencoderSpecTest extends JUnit4(BencoderSpec)
 

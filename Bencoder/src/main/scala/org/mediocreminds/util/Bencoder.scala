@@ -1,31 +1,60 @@
-package org.mediocreminds.util
+/**
+ *   Copyright 2009 Emil Hellman
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ **/
 
 /**
- * Created by IntelliJ IDEA.
  * User: archevel
  * Date: 2009-nov-10
  * Time: 14:36:06
- * To change this template use File | Settings | File Templates.
  */
+
+package org.mediocreminds.util
 
 import scala.collection.immutable.SortedMap
 import scala.collection.immutable.TreeMap
 
-
+/**
+ * Indicates that the value stored in x can be bencoded.
+ * @param x a value that can be bencoded
+ */
 abstract class Benable(val x: Any) {
+
+  /**
+   * If that is a benable the equals method checks for equality of their x.
+   * @param that the Any to check for equality against
+   */
   override def equals(that: Any) = that match {
     case other: Benable => other.x == x
     case _ => false
   }
 }
-class BenInt(override val x: Int) extends Benable
 
+/**
+ * Holds an integer for bencoding.
+ */
+class BenInt(override val x: Int) extends Benable
 object BenInt extends Benable {
   def apply(int: Int) = new BenInt(int)
 
   def unapply(benInt: BenInt) = Some(benInt.x)
 }
 
+/**
+ * Holds a String for bencoding.
+ * The second parameter <code>array</code> is a byte array of the String encoded in UTF-8.
+ */
 class BenString(override val x: String, val array: Array[Byte]) extends Benable with Ordered[BenString] {
   override def compare(that: BenString): Int = {
     x.asInstanceOf[String] compare that.x.asInstanceOf[String]
@@ -40,12 +69,19 @@ object BenString {
   def unapply(benString: BenString) = Some(benString.x, benString.array)
 }
 
+/**
+ * Holds a list of Benables for bencoding.
+ */
 class BenList(override val x: List[Benable]) extends Benable
 object BenList extends Benable {
   def apply(list: List[Benable]) = new BenList(list)
 
   def unapply(benList: BenList) = Some(benList.x)
 }
+
+/**
+ * Holds a SortedMap for bencoding.
+ */
 class BenMap(override val x: SortedMap[BenString, Benable]) extends Benable
 object BenMap extends Benable {
   def apply(map: SortedMap[BenString, Benable]) = new BenMap(map)
@@ -53,12 +89,14 @@ object BenMap extends Benable {
   def unapply(benMap: BenMap) = Some(benMap.x)
 }
 
+/**
+ * Contaitns implicit definitions converting string, int, list and map
+ * to benables and Tuples: (String, String), (String, int),
+ * (String, List[Benable]), (String, SortedMap[BenString, Benable]) to
+ * (BenString, BenString), (BenString, BenInt), (BenString, BenList)
+ * and (BenString, BenMap).
+ */
 object BenConversions {
-  // Implicit definitions converting string, int, list and map to benables and
-  // Tuples: (String, String),(String, int),(String, List[Benable]),
-  // (String, SortedMap[BenString, Benable]) to
-  // (BenString, BenString), (BenString, BenInt), (BenString, BenList) and
-  // (BenString, BenMap)
   implicit def int2BenInt(int: Int) = BenInt(int)
 
   implicit def string2BenString(string: String) = BenString(string)
@@ -76,9 +114,17 @@ object BenConversions {
   implicit def stringMapTuple2BenStringBenMapTuple(t: (String, SortedMap[BenString, Benable])) = (BenString(t._1), BenMap(t._2))
 }
 
+/**
+ * Encodes benables to arrays and decodes arrays to benables.
+ */
 object Bencoder {
   import BenConversions._
 
+  /**
+   * Encodes a <code>Benable</code> as an <code>Array[Byte]</code>.
+   * @param benable the <code>Benable</code> to encode
+   * @return an array with the data in the <code>Benable</code>
+   */
   def encode(benable: Benable): Array[Byte] = {
     benable match {
       case BenString(_, array) => {
@@ -101,6 +147,13 @@ object Bencoder {
     }
   }
 
+  /**
+   * Decodes an <code>Array[Byte]</code> into a <code>Benable</code>
+   * wrapped in an <code>Option</code>.
+   * @param array an array that might be decodeable to a Benable
+   * @return If the <code>Array[Byte]</code> is decodable <code>Some(Benable)</code>
+   * is returned. Otherwise, None.
+   */
   def decode(array: Array[Byte]): Option[Benable] = {
     def decodeBenString(list: List[Byte]): (BenString, List[Byte]) = {
       val (strLength, strAndTail) = list splitAt (list findIndexOf (x => x == ':'))
